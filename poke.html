@@ -2,13 +2,119 @@
 <html>
     <head>
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-        <script src="js/sprite.js"></script>
+        <script src="sprite.js"></script>
     </head>
     <body style="">
     <canvas id='mycanvas' style="">
     </canvas>
         <script>
             // code
+            const canvas = document.querySelector("canvas");
+            const sprites_to_draw = new Array(2); 
+            var draw_loop_timeout;
+            var img = new Image();
+            var state = "idle";
+            // movement similar to walkthrough game
+            const up_arrow = 38;
+            const down_arrow = 40;
+            const left_arrow = 37;
+            const right_arrow= 39;
+
+            sprites_to_draw[0] = new Array(0); 
+            // background
+            sprites_to_draw[1] = new Array(0); 
+            // foreground
+
+            $.getJSON( "sprite_girl/animationData.json", function( data ) {
+                // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
+                // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
+                sprites_to_draw[1].push( new Sprite(data, 150, 250, "idle") );
+            });
+
+            $( document ).ready(function() {
+                console.log( "Page is now ready" );
+                resize();
+                img.onload = function() {
+                    var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        draw_loop_timeout = setInterval(draw_loop, 33);
+                };
+                img.src = 'imgs/bk.jpg';
+            });
+
+            window.addEventListener('resize', resize);
+
+            // keyboard events
+            document.onkeydown = function (e) { 
+                key_input(e.keyCode, true);
+            };
+            
+            document.onkeyup = function (e) {
+                key_input(e.keyCode, false);
+            };
+            
+            var what_key = {};
+            
+            function key_input(keyCode, key_change){
+                what_key[keyCode] = key_change;
+                changeDirection();
+            }
+            
+            function changeDirection(){
+                var horizontal = 0;
+                var vertical = 0;
+                
+                if (what_key[37]) { // left
+                    horizontal--;
+                }
+                if (what_key[38]) { // up
+                    vertical--;
+                }
+                if (what_key[39]) { // right
+                    horizontal++;
+                }
+                if (what_key[40]) { // down
+                    vertical++;
+                }
+                if (horizontal === 0 && vertical === 0) {
+                    state = "idle";
+                } else if (horizontal === -1 && vertical === 0) {
+                    state = "set_walk_W";
+                } else if (horizontal === 0 && vertical === -1) {
+                    state = "set_walk_N";
+                } else if (horizontal === 1 && vertical === 0) {
+                    state = "set_walk_E";
+                } else if (horizontal === 0 && vertical === 1) {
+                    state = "set_walk_S";
+                }
+            }
+
+            function draw_loop(){
+                
+                var background_length = sprites_to_draw[0].length;
+                var forground_length  = sprites_to_draw[1].length; 
+                const context = canvas.getContext('2d');
+                // context.clearRect(0, 0, canvas.width, canvas.height);
+                console.log(state)
+                //Draw background sprites
+                for(var i = 0; i < background_length; i++){
+                    sprites_to_draw[0][i].draw();
+                }
+                //Draw forground sprites
+                for(var i = 0; i < forground_length; i++){
+                    /* sprites_to_draw[1][i].draw( { 'has_background_changed' : has_background_changed,
+                                                    'key_change' : false
+                                                    } 
+                    ); */
+                    sprites_to_draw[1][i].draw(state);
+                }
+            }
+
+            function resize(){
+                // sets canvas equal to window size
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
             console.log("I EDITED THIS :D")
         </script>
     </body>
