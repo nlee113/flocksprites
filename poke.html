@@ -3,6 +3,8 @@
     <head>
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="sprite.js"></script>
+        <script src="boid.js"></script>
+        
     </head>
     <body style="">
     <canvas id='mycanvas' style="">
@@ -10,9 +12,12 @@
         <script>
             // code
             const canvas = document.querySelector("canvas");
+            const offscreen = new OffscreenCanvas(256, 256);
             const sprites_to_draw = new Array(2); 
+            const boids_to_draw = new Array(1);
             var draw_loop_timeout;
             var img = new Image();
+            var color_map = new Image();
             var state = "idle";
             // movement similar to walkthrough game
             const up_arrow = 38;
@@ -22,13 +27,22 @@
 
             sprites_to_draw[0] = new Array(0); 
             // background
-            sprites_to_draw[1] = new Array(0); 
+            sprites_to_draw[1] = new Array(0);
+            boids_to_draw[0] = new Array(0); 
             // foreground
 
             $.getJSON( "sprite_girl/animationData.json", function( data ) {
                 // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
                 // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
-                sprites_to_draw[1].push( new Sprite(data, 150, 250, "idle") );
+                sprites_to_draw[1].push( new Sprite(data, 250, 250, "idle") );
+            });
+
+            $.getJSON( "magikarp/animationData.json", function( data ) {
+                // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
+                // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
+                boids_to_draw[0].push( new Boid(data, 150, 350, "set_walk_E") );
+                boids_to_draw[0].push( new Boid(data, 550, 450, "set_walk_E") );
+                
             });
 
             $( document ).ready(function() {
@@ -39,7 +53,13 @@
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         draw_loop_timeout = setInterval(draw_loop, 33);
                 };
-                img.src = 'imgs/bk.jpg';
+                img.src = 'imgs/bk2.jpg';
+
+                color_map.onload = function() {
+                    var ctx = offscreen.getContext('2d');
+                    ctx.drawImage(color_map, 0, 0, canvas.width, canvas.height);
+                };
+                color_map.src = 'imgs/bk2_bounds.png';
             });
 
             window.addEventListener('resize', resize);
@@ -92,13 +112,14 @@
             function draw_loop(){
                 
                 var background_length = sprites_to_draw[0].length;
-                var forground_length  = sprites_to_draw[1].length; 
+                var forground_length  = sprites_to_draw[1].length;
+                var boid_length = boids_to_draw[0].length; 
                 const context = canvas.getContext('2d');
                 // context.clearRect(0, 0, canvas.width, canvas.height);
-                console.log(state)
+                //console.log(state)
                 //Draw background sprites
                 for(var i = 0; i < background_length; i++){
-                    sprites_to_draw[0][i].draw();
+                    //sprites_to_draw[0][i].draw();
                 }
                 //Draw forground sprites
                 for(var i = 0; i < forground_length; i++){
@@ -106,16 +127,25 @@
                                                     'key_change' : false
                                                     } 
                     ); */
-                    sprites_to_draw[1][i].draw(state);
+                    //sprites_to_draw[1][i].draw(state);
+                    //console.log("TEST" + sprites_to_draw[1][i].x);
                 }
+                //Draw boids
+                for(var i = 0; i < boid_length; i++){
+                    boids_to_draw[0][i].draw();
+                    boids_to_draw[0][i].align(boids_to_draw[0]);
+                }
+                
             }
 
             function resize(){
                 // sets canvas equal to window size
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
+
+                offscreen.width = window.innerWidth;
+                offscreen.height = window.innerHeight;
             }
-            console.log("I EDITED THIS :D")
         </script>
     </body>
 </html>
