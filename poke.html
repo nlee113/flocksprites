@@ -40,7 +40,7 @@
             $.getJSON( "magikarp/animationData.json", function( data ) {
                 // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
                 // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
-                boids_to_draw[0].push( new Boid(data, 150, 350, "set_walk_E") );
+                boids_to_draw[0].push( new Boid(data, 350, 350, "set_walk_E") );
                 boids_to_draw[0].push( new Boid(data, 550, 450, "set_walk_E") );
                 
             });
@@ -132,8 +132,8 @@
                 }
                 //Draw boids
                 for(var i = 0; i < boid_length; i++){
-                    boids_to_draw[0][i].draw();
-                    boids_to_draw[0][i].align(boids_to_draw[0]);
+                    boids_to_draw[0][i].draw(boids_to_draw[0]);
+                    //boids_to_draw[0][i].align();
                 }
                 
             }

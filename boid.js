@@ -3,8 +3,8 @@ class Boid{
     constructor(boid_json, x, y, start_state){
         this.x = x;
         this.y = y;
-        this.v_x = this.randnum(-1.5,1.5);
-        this.v_y = this.randnum(-1.5,1.5);
+        this.v_x = this.randnum(-2.5,2.5);
+        this.v_y = this.randnum(-2.5,2.5);
         this.a_x = 0;
         this.a_y = 0;
 
@@ -57,9 +57,9 @@ class Boid{
         this.v_y += this.a_y;
         
     }
-    draw(){
+    draw(allboids){
         var ctx = canvas.getContext('2d');
-
+        this.align(allboids);
         if(this.cur_bk_data != null){
             ctx.putImageData(this.cur_bk_data ,this.x - this.v_x ,this.y - this.v_y);
             this.bound_x = 0
