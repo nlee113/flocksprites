@@ -39,10 +39,13 @@
 
             $.getJSON( "magikarp/animationData.json", function( data ) {
                 // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
-                // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
-                boids_to_draw[0].push( new Boid(data, 650, 350, "set_walk_W") );
+                //sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
+                
+                boids_to_draw[0].push( new Boid(data, 1150, 350, "set_walk_W") );
                 boids_to_draw[0].push( new Boid(data, 1050, 450, "set_walk_E") );
-                boids_to_draw[0].push( new Boid(data, 1250, 450, "set_walk_E") );
+                boids_to_draw[0].push( new Boid(data, 1250, 350, "set_walk_E") );
+                
+                
                 
             });
 
@@ -131,7 +134,7 @@
                                                     'key_change' : false
                                                     } 
                     ); */
-                    //sprites_to_draw[1][i].draw(state);
+                    sprites_to_draw[1][i].draw(state);
                     //console.log("TEST" + sprites_to_draw[1][i].x);
                 }
                 //Draw boids
