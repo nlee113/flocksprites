@@ -40,8 +40,9 @@
             $.getJSON( "magikarp/animationData.json", function( data ) {
                 // sprites_to_draw[1].push( new Sprite(data, 0 ,0, "idleSpin") );
                 // sprites_to_draw[1].push( new Sprite(data, 100 ,100, "idleWave") );
-                boids_to_draw[0].push( new Boid(data, 350, 350, "set_walk_E") );
-                boids_to_draw[0].push( new Boid(data, 550, 450, "set_walk_E") );
+                boids_to_draw[0].push( new Boid(data, 650, 350, "set_walk_W") );
+                boids_to_draw[0].push( new Boid(data, 1050, 450, "set_walk_E") );
+                boids_to_draw[0].push( new Boid(data, 1250, 450, "set_walk_E") );
                 
             });
 
@@ -53,13 +54,13 @@
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         draw_loop_timeout = setInterval(draw_loop, 33);
                 };
-                img.src = 'imgs/bk2.jpg';
+                img.src = 'imgs/bk2_bounds2.png';
 
                 color_map.onload = function() {
                     var ctx = offscreen.getContext('2d');
                     ctx.drawImage(color_map, 0, 0, canvas.width, canvas.height);
                 };
-                color_map.src = 'imgs/bk2_bounds.png';
+                color_map.src = 'imgs/bk2_bounds2.png';
             });
 
             window.addEventListener('resize', resize);
@@ -118,8 +119,11 @@
                 // context.clearRect(0, 0, canvas.width, canvas.height);
                 //console.log(state)
                 //Draw background sprites
+                context.clearRect(0,0,canvas.width,canvas.height);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
                 for(var i = 0; i < background_length; i++){
                     //sprites_to_draw[0][i].draw();
+                    
                 }
                 //Draw forground sprites
                 for(var i = 0; i < forground_length; i++){

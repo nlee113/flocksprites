@@ -7,6 +7,8 @@ class Boid{
         this.v_y = this.randnum(-2.5,2.5);
         this.a_x = 0;
         this.a_y = 0;
+        this.max_a = .2;
+        this.max_v = 4;
 
         this.boid_json = boid_json;
         this.state = start_state;
@@ -29,10 +31,8 @@ class Boid{
         let steer_y = 0;
         let total = 0;
         for(let others of boids){
-            //console.log("STTER" + steer_x);
             let gap_x = Math.abs(others.x - this.x)
             let gap_y = Math.abs(others.y - this.y)
-            //console.log("GAP " + gap_x + "," + gap_y)
             if(others != this && gap_x <= perceptionRadius && gap_y <= perceptionRadius){
                 steer_x += others.v_x;
                 steer_y += others.v_y;
@@ -46,36 +46,45 @@ class Boid{
             steer_y -= this.v_y;
             this.a_x = steer_x;
             this.a_y = steer_y;
+
         }
     }
 
     update(){
         this.x += this.v_x;
         this.y += this.v_y;
-        //console.log(this.a_x);
         this.v_x += this.a_x;
         this.v_y += this.a_y;
         
     }
+    bounds_hit(direction){
+
+        switch(direction){
+            case 'W':
+                //console.log("test");
+                this.x += 3;
+                this.v_x *= -1;
+                break;
+            case 'N':
+                this.y += 3;
+                this.v_y *= -1;
+                break;
+            case 'E':
+                this.x -= 3;
+                this.v_x *= -1;
+            case 'S':
+                this.y -= 3;
+                this.v_y *= -1;
+        }
+    }
     draw(allboids){
         var ctx = canvas.getContext('2d');
-        this.align(allboids);
-        if(this.cur_bk_data != null){
-            ctx.putImageData(this.cur_bk_data ,this.x - this.v_x ,this.y - this.v_y);
-            this.bound_x = 0
-            this.bound_y = 0
-        }
-
+        
         if(this.boid_json[this.root_e][this.state][this.cur_frame]['img'] == null){
             console.log("loading");
             this.boid_json[this.root_e][this.state][this.cur_frame]['img'] = new Image();
             this.boid_json[this.root_e][this.state][this.cur_frame]['img'].src = 'magikarp/' + this.root_e + '/' + this.state + '/' + this.cur_frame + '.png';
         }
-
-        this.cur_bk_data = ctx.getImageData(this.x, this.y, 
-            this.boid_json[this.root_e][this.state][this.cur_frame]['w'] + 5, 
-            this.boid_json[this.root_e][this.state][this.cur_frame]['h'] + 5);
-
         ctx.drawImage(this.boid_json[this.root_e][this.state][this.cur_frame]['img'], this.x, this.y );
         this.cur_frame = this.cur_frame + 1;
 
@@ -91,17 +100,28 @@ class Boid{
         var corner3_data = map_context.getImageData( this.x, botleft_corner_y, 1, 1).data; //data of botleft corner
         var corner4_data = map_context.getImageData( topright_corner_x, botleft_corner_y , 1, 1).data; //data of botright corner
         
-        //console.log(corner1_data);
-        /*
-        if(corner1_data[2] != 255){
-            this.bounds_x = this.v_x;
-            this.bounds_y = this.v_y;
-            this.v_x = 0;
-            this.v_y = 0;
-        }  
-        */
-
+        if((corner1_data[0] == 0 && corner1_data[1] == 255 && corner1_data[2] == 0) || (corner3_data[0] == 0 && corner3_data[1] == 255 && corner3_data[2] == 0)){
+            this.bounds_hit('W');
+            console.log("GREEN HIT");
+        }
+        else if((corner1_data[0] == 255 && corner1_data[1] == 255 && corner1_data[2] == 0) || (corner2_data[0] == 255 && corner2_data[1] == 255 && corner2_data[2] == 0)){
+            this.bounds_hit('N');
+            console.log("YELLOW HIT");
+        }
+        else if((corner4_data[0] == 255 && corner4_data[1] == 0 && corner4_data[2] == 0) || (corner2_data[0] == 255 && corner2_data[1] == 0 && corner2_data[2] == 0)){
+            this.bounds_hit('E');
+            console.log("RED HIT");
+        }
+        else if((corner4_data[0] == 0 && corner4_data[1] == 255 && corner4_data[2] == 255) || (corner3_data[0] == 0 && corner3_data[1] == 255 && corner3_data[2] == 255)){
+            this.bounds_hit('S');
+            console.log("TEAL HIT");
+        }
+        else{
+            this.a_x = this.a_y = 0;
+        this.align(allboids);
         this.update();
+        }
+
     }
     
 }
