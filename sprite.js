@@ -20,7 +20,7 @@ class Sprite {
         this.idle_state = ["idle","idleSpin","idleMagic"];
         this.in_idle = 0;
     }
-
+    
     velocity() {
         if (this.state == "set_walk_N") {
             this.x_v = 0;
@@ -86,7 +86,7 @@ class Sprite {
         if(this.cur_frame >= this.sprite_json[this.root_e][this.state].length){
             this.cur_frame = 0;
         }
-
+        // attempted but did not finish... future implementation: add bounds to coordinate with bk2_bounds3.png
         if(this.x >= (window.innerWidth - this.sprite_json[this.root_e][this.state][this.cur_frame]['w']) ){
             this.x--;
             this.bound_x = -1;

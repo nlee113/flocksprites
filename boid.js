@@ -25,6 +25,7 @@ class Boid {
         return Math.random() * (max - min) + min;
     }
 
+    // Alignment
     align(boids) {
         let perceptionRadius = 100;
         let steer_x = 0;
@@ -52,6 +53,7 @@ class Boid {
         }
     }
 
+    // Cohesion
     cohesion(boids) {
         let perceptionRadius = 100;
         let steer_x = 0;
@@ -80,7 +82,8 @@ class Boid {
 
         }
     }
-    
+
+    // Separation
     seperation(boids) {
         let perceptionRadius = 100;
         let steer_x = 0;
@@ -157,10 +160,8 @@ class Boid {
         this.y += this.v_y;
         this.v_x += this.a_x;
         this.v_y += this.a_y;
-
-
-
     }
+    
     bounds_hit(direction) {
 
         switch (direction) {
@@ -196,6 +197,7 @@ class Boid {
             this.cur_frame = 0;
         }
 
+        // BOID BOUNDS 
         var map_context = offscreen.getContext('2d');
         var topright_corner_x = this.x + this.boid_json[this.root_e][this.state][this.cur_frame]['w'];
         var botleft_corner_y = this.y + this.boid_json[this.root_e][this.state][this.cur_frame]['h'];
@@ -203,19 +205,22 @@ class Boid {
         var corner2_data = map_context.getImageData(topright_corner_x, this.y, 1, 1).data; //data of topright corner
         var corner3_data = map_context.getImageData(this.x, botleft_corner_y, 1, 1).data; //data of botleft corner
         var corner4_data = map_context.getImageData(topright_corner_x, botleft_corner_y, 1, 1).data; //data of botright corner
-
+        // W, green
         if ((corner1_data[0] == 0 && corner1_data[1] == 255 && corner1_data[2] == 0) || (corner3_data[0] == 0 && corner3_data[1] == 255 && corner3_data[2] == 0)) {
             this.bounds_hit('W');
             console.log("GREEN HIT");
         }
+        // N, yellow
         else if ((corner1_data[0] == 255 && corner1_data[1] == 255 && corner1_data[2] == 0) || (corner2_data[0] == 255 && corner2_data[1] == 255 && corner2_data[2] == 0)) {
             this.bounds_hit('N');
             console.log("YELLOW HIT");
         }
+        // E, red
         else if ((corner4_data[0] == 255 && corner4_data[1] == 0 && corner4_data[2] == 0) || (corner2_data[0] == 255 && corner2_data[1] == 0 && corner2_data[2] == 0)) {
             this.bounds_hit('E');
             console.log("RED HIT");
         }
+        // S, teal
         else if ((corner4_data[0] == 0 && corner4_data[1] == 255 && corner4_data[2] == 255) || (corner3_data[0] == 0 && corner3_data[1] == 255 && corner3_data[2] == 255)) {
             this.bounds_hit('S');
             console.log("TEAL HIT");
